@@ -1,32 +1,22 @@
-from flask import Flask, request, jsonify
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import os
-from simulation import run_simulation  # 假设 simulation.py 包含一个 run_simulation 函数
+from flask import Flask, request, jsonify, send_file
+from simulation import run_simulation
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static")
 
-@app.route('/run_simulation', methods=['POST'])
-def run_simulation_endpoint():
-    try:
-        # 获取请求中的参数
-        data = request.json
-        scenario = data.get("scenario", "peace")  # 默认场景
-        population_data = data.get("population_data", {})  # 默认人口分布
-
-        # 调用 simulation.py 的函数
-        results = run_simulation(scenario, population_data)
-
-        # 返回结果
-        return jsonify({"results": results})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/')
+@app.route("/")
 def index():
-    return app.send_static_file('index.html')  # 前端静态页面
+    return send_file("static/index.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/run_simulation", methods=["POST"])
+def simulate():
+    data = request.json
+    scenario = data.get("scenario", "peace")
+    population = data.get("population_data", {
+        "healthy": 800000,
+        "mild": 20000,
+        "moderate": 5000,
+        "severe": 3000,
+    })
+
+    results, images = run_simulation(scenario=scenario, initial_population=population)
+    return jsonify({"results": results, "images": images})
