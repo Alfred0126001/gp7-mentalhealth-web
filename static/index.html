@@ -3,20 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulation</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Mental Health Simulation</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Simulation</h1>
+    <h1>Mental Health Simulation</h1>
     <form id="simulation-form">
-        <label for="scenario">Scenario:</label>
-        <select id="scenario" name="scenario">
+        <label>Scenario:</label>
+        <select id="scenario">
             <option value="peace">Peace</option>
             <option value="crisis">Crisis</option>
         </select>
+        <label>Healthy Population:</label>
+        <input type="number" id="healthy" value="800000">
+        <label>Mild Cases:</label>
+        <input type="number" id="mild" value="20000">
+        <label>Moderate Cases:</label>
+        <input type="number" id="moderate" value="5000">
+        <label>Severe Cases:</label>
+        <input type="number" id="severe" value="3000">
         <button type="submit">Run Simulation</button>
     </form>
-    <div id="results"></div>
-    <script src="script.js"></script>
+    <div id="results">
+        <h2>Results:</h2>
+        <pre id="result-content"></pre>
+        <h2>Generated Graphs:</h2>
+        <div id="images"></div>
+    </div>
 </body>
 </html>
