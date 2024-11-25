@@ -1,22 +1,14 @@
-from flask import Flask, request, jsonify, send_file
+# app.py
+
+from flask import Flask, render_template
 from simulation import run_simulation
 
-app = Flask(__name__, static_folder="static")
+app = Flask(__name__)
 
-@app.route("/")
+@app.route('/')
 def index():
-    return send_file("static/index.html")
+    outputs = run_simulation()
+    return render_template('index.html', outputs=outputs)
 
-@app.route("/run_simulation", methods=["POST"])
-def simulate():
-    data = request.json
-    scenario = data.get("scenario", "peace")
-    population = data.get("population_data", {
-        "healthy": 800000,
-        "mild": 20000,
-        "moderate": 5000,
-        "severe": 3000,
-    })
-
-    results, images = run_simulation(scenario=scenario, initial_population=population)
-    return jsonify({"results": results, "images": images})
+if __name__ == '__main__':
+    app.run(debug=True)
