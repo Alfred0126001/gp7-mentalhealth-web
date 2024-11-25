@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     if request.method == 'POST':
         # Get user input
-        healthy_population = int(request.form.get('healthy_population', 800000))
+        healthy_population = int(request.form.get('healthy_population', 1000000))
         mild_cases = int(request.form.get('mild_cases', 20000))
         moderate_cases = int(request.form.get('moderate_cases', 5000))
         severe_cases = int(request.form.get('severe_cases', 3000))
