@@ -212,7 +212,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
             avg_wait_severe = np.mean(queue_lengths_severe[-30:]) / mu_severe if mu_severe > 0 else 0
 
             adjust = True
-            delta = 0.08  
+            delta = 0.05  
 
             if avg_wait_severe > 7:
                 allocation_severe = min(allocation_severe + delta, 1.0)
