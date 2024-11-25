@@ -1,34 +1,39 @@
+<!-- templates/index.html -->
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Health Simulation</title>
-    <script src="script.js" defer></script>
+    <title>模拟结果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Mental Health Simulation</h1>
-    <form id="simulation-form">
-        <label>Scenario:</label>
-        <select id="scenario">
-            <option value="peace">Peace</option>
-            <option value="crisis">Crisis</option>
-        </select>
-        <label>Healthy Population:</label>
-        <input type="number" id="healthy" value="800000">
-        <label>Mild Cases:</label>
-        <input type="number" id="mild" value="20000">
-        <label>Moderate Cases:</label>
-        <input type="number" id="moderate" value="5000">
-        <label>Severe Cases:</label>
-        <input type="number" id="severe" value="3000">
-        <button type="submit">Run Simulation</button>
-    </form>
-    <div id="results">
-        <h2>Results:</h2>
-        <pre id="result-content"></pre>
-        <h2>Generated Graphs:</h2>
-        <div id="images"></div>
+    <h1>模拟结果</h1>
+    <div class="outputs">
+        <p>一年后轻度病例数量：{{ outputs.mild_cases_after_one_year }}</p>
+        <p>一年后中度病例数量：{{ outputs.moderate_cases_after_one_year }}</p>
+        <p>一年后重度病例数量：{{ outputs.severe_cases_after_one_year }}</p>
+        <p>轻度病例平均等待时间：{{ outputs.avg_waiting_time_mild|round(2) }} 天</p>
+        <p>中度病例平均等待时间：{{ outputs.avg_waiting_time_moderate|round(2) }} 天</p>
+        <p>重度病例平均等待时间：{{ outputs.avg_waiting_time_severe|round(2) }} 天</p>
+        <p>轻度病例平均队列长度：{{ outputs.avg_queue_length_mild|round(2) }}</p>
+        <p>中度病例平均队列长度：{{ outputs.avg_queue_length_moderate|round(2) }}</p>
+        <p>重度病例平均队列长度：{{ outputs.avg_queue_length_severe|round(2) }}</p>
     </div>
+
+    <h2>每月资源分配比例</h2>
+    <div class="table">
+        {{ outputs.monthly_allocations|safe }}
+    </div>
+
+    <h2>图表</h2>
+    <div class="plots">
+        <img src="{{ url_for('static', filename='images/queue_lengths.png') }}" alt="队列长度">
+        <img src="{{ url_for('static', filename='images/resource_allocations.png') }}" alt="资源分配比例">
+        <img src="{{ url_for('static', filename='images/daily_net_new_cases.png') }}" alt="每日净新增病例">
+        <img src="{{ url_for('static', filename='images/cumulative_cured.png') }}" alt="累计治愈病例">
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
