@@ -23,7 +23,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     allocation_severe = 0.1      # Resource allocation ratio for severe cases
 
     # Total number of mental health professionals
-    total_doctors = 1000  # Total number of doctors
+    total_doctors = 1700  # Total number of doctors
 
     # Service rate per doctor (number of patients cured per day)
     service_rate_mild = 10       # Number of mild cases cured per doctor per day
@@ -36,10 +36,10 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     # Adjust transition matrix based on scenario
     if scenario == 'peace':
         T = np.array([
-            [0.995, 0.005, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.1, 0.7, 0.2, 0.00],       # Transition probabilities for mild cases
-            [0.0, 0.1, 0.7, 0.2],        # Transition probabilities for moderate cases
-            [0.00, 0.00, 0.0, 1.00]      # Transition probabilities for severe cases
+            [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.10, 0.60, 0.30, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.60, 0.30],        # Transition probabilities for moderate cases
+            [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
         ])
     elif scenario == 'crisis':
         T = np.array([
