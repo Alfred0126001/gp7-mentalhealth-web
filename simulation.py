@@ -3,106 +3,116 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import io
-import base64
 import os
 
-def run_simulation():
-    # 模拟参数
+def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases, scenario):
+    # Simulation parameters
 
-    # 初始心理健康状态分布
-    healthy_population = 800000  # 健康个体数量
-    mild_cases = 20000           # 轻度病例数量
-    moderate_cases = 5000        # 中度病例数量
-    severe_cases = 3000          # 重度病例数量
+    # Initial mental health state distribution
+    healthy_population = healthy_population    # Number of healthy individuals
+    mild_cases = mild_cases                    # Number of mild cases
+    moderate_cases = moderate_cases            # Number of moderate cases
+    severe_cases = severe_cases                # Number of severe cases
 
-    # 场景选择
-    scenario = 'peace'  # 选择 'peace'（稳定）或 'crisis'（危机）
+    # Scenario selection
+    scenario = scenario  # 'peace' (stable) or 'crisis'
 
-    # 初始资源分配系数（确保总和为 1.0）
-    allocation_mild = 0.7        # 轻度病例的资源分配比例
-    allocation_moderate = 0.2    # 中度病例的资源分配比例
-    allocation_severe = 0.1      # 重度病例的资源分配比例
+    # Initial resource allocation coefficients (ensure they sum to 1.0)
+    allocation_mild = 0.7        # Resource allocation ratio for mild cases
+    allocation_moderate = 0.2    # Resource allocation ratio for moderate cases
+    allocation_severe = 0.1      # Resource allocation ratio for severe cases
 
-    # 心理健康专业人员总数
-    total_doctors = 1000  # 医生总数
+    # Total number of mental health professionals
+    total_doctors = 1000  # Total number of doctors
 
-    # 每个医生的服务率（每天治愈的患者数量）
-    service_rate_mild = 10       # 每个医生每天治愈的轻度病例数量
-    service_rate_moderate = 5    # 每个医生每天治愈的中度病例数量
-    service_rate_severe = 1      # 每个医生每天治愈的重度病例数量
+    # Service rate per doctor (number of patients cured per day)
+    service_rate_mild = 10       # Number of mild cases cured per doctor per day
+    service_rate_moderate = 5    # Number of moderate cases cured per doctor per day
+    service_rate_severe = 1      # Number of severe cases cured per doctor per day
 
-    # 模拟时间（以天为单位）
-    SIM_TIME = 365  # 模拟一年
+    # Simulation time (in days)
+    SIM_TIME = 365  # Simulate one year
 
-    # 根据场景调整转移矩阵
+    # Adjust transition matrix based on scenario
     if scenario == 'peace':
         T = np.array([
-            [0.995, 0.005, 0.00, 0.00],  # 健康个体的转移概率
-            [0.1, 0.7, 0.2, 0.00],       # 轻度病例的转移概率
-            [0.0, 0.1, 0.7, 0.2],        # 中度病例的转移概率
-            [0.00, 0.00, 0.0, 1.00]      # 重度病例的转移概率
+            [0.995, 0.005, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.1, 0.7, 0.2, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.7, 0.2],        # Transition probabilities for moderate cases
+            [0.00, 0.00, 0.0, 1.00]      # Transition probabilities for severe cases
         ])
     elif scenario == 'crisis':
         T = np.array([
-            [0.99, 0.01, 0.00, 0.00],  # 健康个体的转移概率
-            [0.10, 0.75, 0.15, 0.0],   # 轻度病例的转移概率
-            [0.0, 0.10, 0.85, 0.05],   # 中度病例的转移概率
-            [0.0, 0.0, 0.05, 0.95]     # 重度病例的转移概率
+            [0.99, 0.01, 0.00, 0.00],    # Transition probabilities for healthy individuals
+            [0.10, 0.75, 0.15, 0.0],     # Transition probabilities for mild cases
+            [0.0, 0.10, 0.85, 0.05],     # Transition probabilities for moderate cases
+            [0.0, 0.0, 0.05, 0.95]       # Transition probabilities for severe cases
+        ])
+    else:
+        # Default to 'peace' scenario
+        T = np.array([
+            [0.995, 0.005, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.1, 0.7, 0.2, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.7, 0.2],        # Transition probabilities for moderate cases
+            [0.00, 0.00, 0.0, 1.00]      # Transition probabilities for severe cases
         ])
 
-    # 初始化状态向量 S = [健康, 轻度, 中度, 重度]
+    # Initialize state vector S = [Healthy, Mild, Moderate, Severe]
     S = np.array([healthy_population, mild_cases, moderate_cases, severe_cases], dtype=float)
 
-    # 计算初始医生分配
-    doctors_mild = int(total_doctors * allocation_mild)           # 分配给轻度病例的医生数量
-    doctors_moderate = int(total_doctors * allocation_moderate)   # 分配给中度病例的医生数量
-    doctors_severe = total_doctors - doctors_mild - doctors_moderate  # 分配给重度病例的医生数量
+    # Subsequent code remains unchanged; just ensure all required variables are defined within the function
 
-    # 计算每组的服务率
-    mu_mild = doctors_mild * service_rate_mild           # 轻度病例的每日服务能力
-    mu_moderate = doctors_moderate * service_rate_moderate   # 中度病例的每日服务能力
-    mu_severe = doctors_severe * service_rate_severe       # 重度病例的每日服务能力
+    # Calculate initial doctor allocation
+    doctors_mild = int(total_doctors * allocation_mild)               # Number of doctors allocated to mild cases
+    doctors_moderate = int(total_doctors * allocation_moderate)       # Number of doctors allocated to moderate cases
+    doctors_severe = total_doctors - doctors_mild - doctors_moderate  # Number of doctors allocated to severe cases
 
-    # 初始化资源分配比例列表
+    # Calculate service capacity for each group
+    mu_mild = doctors_mild * service_rate_mild               # Daily service capacity for mild cases
+    mu_moderate = doctors_moderate * service_rate_moderate   # Daily service capacity for moderate cases
+    mu_severe = doctors_severe * service_rate_severe         # Daily service capacity for severe cases
+
+    # Initialize resource allocation ratio lists
     allocation_mild_list = []
     allocation_moderate_list = []
     allocation_severe_list = []
 
-    # 初始化每组的等待队列
+    # Initialize waiting queues for each group
     queue_mild = 10000
     queue_moderate = 5000
     queue_severe = 1000
 
-    # 初始化记录队列长度的列表
+    # Initialize lists to record queue lengths
     queue_lengths_mild = []
     queue_lengths_moderate = []
     queue_lengths_severe = []
 
-    # 初始化跟踪活跃病例数量的列表
+    # Initialize lists to track active case numbers
     active_mild = [mild_cases]
     active_moderate = [moderate_cases]
     active_severe = [severe_cases]
 
-    # 初始化记录每日净新增病例的列表
+    # Initialize lists to record daily net new cases
     daily_net_new_mild = []
     daily_net_new_moderate = []
     daily_net_new_severe = []
 
-    # 初始化记录累计治愈病例的列表
+    # Initialize lists to record cumulative cured cases
     cumulative_cured_mild = [0]
     cumulative_cured_moderate = [0]
     cumulative_cured_severe = [0]
 
-    # 模拟循环
+    # Simulation loop
     for day in range(SIM_TIME):
-        # 更新心理健康状态（马尔可夫链中的一步）
+        # ... (Simulation code remains unchanged)
+
+        # Update mental health states (one step in Markov chain)
         S = np.dot(S, T)
 
-        # 确保 S 中没有负值
+        # Ensure no negative values in S
         S = np.maximum(S, 0)
 
-        # 计算总人口
+        # Calculate total population
         total_population = S.sum()
 
         if total_population == 0:
@@ -110,17 +120,19 @@ def run_simulation():
             new_moderate = 0
             new_severe = 0
         else:
-            # 计算每个状态的比例
-            fraction_mild = S[1] / total_population       # 轻度病例的比例
-            fraction_moderate = S[2] / total_population   # 中度病例的比例
-            fraction_severe = S[3] / total_population     # 重度病例的比例
+            # Calculate the proportion of each state
+            fraction_mild = S[1] / total_population       # Proportion of mild cases
+            fraction_moderate = S[2] / total_population   # Proportion of moderate cases
+            fraction_severe = S[3] / total_population     # Proportion of severe cases
 
-            # 计算每组的新病例
-            new_mild = S[0] * (T[0,1] + T[0,2] + T[0,3])  # 健康转为轻度/中度/重度
-            new_moderate = S[1] * (T[1,2] + T[1,3])       # 轻度转为中度/重度
-            new_severe = S[2] * T[2,3]                   # 中度转为重度
+            # Calculate new cases for each group
+            new_mild = S[0] * (T[0,1] + T[0,2] + T[0,3])      # Healthy to mild/moderate/severe
+            new_moderate = S[1] * (T[1,2] + T[1,3])           # Mild to moderate/severe
+            new_severe = S[2] * T[2,3]                        # Moderate to severe
 
-        # 确保到达率非负
+        # ... (Subsequent code remains unchanged)
+
+        # Ensure arrival rates are non-negative
         lambda_mild = max(new_mild, 0)
         lambda_moderate = max(new_moderate, 0)
         lambda_severe = max(new_severe, 0)
@@ -134,49 +146,49 @@ def run_simulation():
             num_arrivals_moderate = 0
             num_arrivals_severe = 0
 
-        # 更新等待队列
+        # Update waiting queues
         queue_mild += num_arrivals_mild
         queue_moderate += num_arrivals_moderate
         queue_severe += num_arrivals_severe
 
-        # 检查是否为周末（假设第 0 天是星期一）
-        if day % 7 in [5, 6]:  # 5 和 6 对应星期六和星期日
+        # Check if it's the weekend (assuming day 0 is Monday)
+        if day % 7 in [5, 6]:  # 5 and 6 correspond to Saturday and Sunday
             patients_served_mild = 0
             patients_served_moderate = 0
             patients_served_severe = 0
         else:
-            # 根据服务能力计算每组服务的患者
+            # Calculate the number of patients served based on service capacity
             patients_served_mild = min(queue_mild, mu_mild)
             patients_served_moderate = min(queue_moderate, mu_moderate)
             patients_served_severe = min(queue_severe, mu_severe)
 
-        # 更新队列长度
+        # Update queue lengths
         queue_mild -= patients_served_mild
         queue_moderate -= patients_served_moderate
         queue_severe -= patients_served_severe
 
-        # 计算每日净新增病例（到达 - 治愈）
+        # Calculate daily net new cases (arrivals - cured)
         net_new_mild = num_arrivals_mild - patients_served_mild
         net_new_moderate = num_arrivals_moderate - patients_served_moderate
         net_new_severe = num_arrivals_severe - patients_served_severe
 
-        # 记录每日净新增病例
+        # Record daily net new cases
         daily_net_new_mild.append(net_new_mild)
         daily_net_new_moderate.append(net_new_moderate)
         daily_net_new_severe.append(net_new_severe)
 
-        # 更新治愈和恢复计数
+        # Update recovery counts
         recovered_mild = patients_served_mild
-        S[0] += recovered_mild      
-        S[1] -= recovered_mild      
+        S[0] += recovered_mild      # Increase healthy individuals
+        S[1] -= recovered_mild      # Decrease mild cases
 
         recovered_moderate = patients_served_moderate
-        S[0] += recovered_moderate  
-        S[2] -= recovered_moderate  
+        S[0] += recovered_moderate  # Increase healthy individuals
+        S[2] -= recovered_moderate  # Decrease moderate cases
 
         recovered_severe = patients_served_severe
-        S[0] += recovered_severe    
-        S[3] -= recovered_severe    
+        S[0] += recovered_severe    # Increase healthy individuals
+        S[3] -= recovered_severe    # Decrease severe cases
 
         cumulative_cured_mild.append(cumulative_cured_mild[-1] + recovered_mild)
         cumulative_cured_moderate.append(cumulative_cured_moderate[-1] + recovered_moderate)
@@ -246,59 +258,59 @@ def run_simulation():
     avg_queue_length_moderate = np.mean(queue_lengths_moderate)
     avg_queue_length_severe = np.mean(queue_lengths_severe)
 
-    # 保存图像到 static/images/
+    # Save images to static/images/
     if not os.path.exists('static/images'):
         os.makedirs('static/images')
 
     plt.figure(figsize=(18, 6))
-    plt.plot(range(len(queue_lengths_mild)), queue_lengths_mild, label='轻度病例队列长度')
-    plt.plot(range(len(queue_lengths_moderate)), queue_lengths_moderate, label='中度病例队列长度')
-    plt.plot(range(len(queue_lengths_severe)), queue_lengths_severe, label='重度病例队列长度')
-    plt.xlabel('天数')
-    plt.ylabel('队列长度')
-    plt.title('队列长度随时间的变化')
+    plt.plot(range(len(queue_lengths_mild)), queue_lengths_mild, label='Queue Length for Mild Cases')
+    plt.plot(range(len(queue_lengths_moderate)), queue_lengths_moderate, label='Queue Length for Moderate Cases')
+    plt.plot(range(len(queue_lengths_severe)), queue_lengths_severe, label='Queue Length for Severe Cases')
+    plt.xlabel('Days')
+    plt.ylabel('Queue Length')
+    plt.title('Queue Length Changes Over Time')
     plt.legend()
     plt.tight_layout()
     plt.savefig('static/images/queue_lengths.png')
     plt.close()
 
     plt.figure(figsize=(18, 6))
-    plt.plot(range(len(allocation_mild_list)), allocation_mild_list, label='轻度病例资源分配比例')
-    plt.plot(range(len(allocation_moderate_list)), allocation_moderate_list, label='中度病例资源分配比例')
-    plt.plot(range(len(allocation_severe_list)), allocation_severe_list, label='重度病例资源分配比例')
-    plt.xlabel('天数')
-    plt.ylabel('资源分配系数')
-    plt.title('资源分配比例随时间的变化')
+    plt.plot(range(len(allocation_mild_list)), allocation_mild_list, label='Resource Allocation Ratio for Mild Cases')
+    plt.plot(range(len(allocation_moderate_list)), allocation_moderate_list, label='Resource Allocation Ratio for Moderate Cases')
+    plt.plot(range(len(allocation_severe_list)), allocation_severe_list, label='Resource Allocation Ratio for Severe Cases')
+    plt.xlabel('Days')
+    plt.ylabel('Resource Allocation Coefficient')
+    plt.title('Resource Allocation Ratios Over Time')
     plt.legend()
     plt.tight_layout()
     plt.savefig('static/images/resource_allocations.png')
     plt.close()
 
     plt.figure(figsize=(18, 6))
-    plt.plot(range(len(daily_net_new_mild)), daily_net_new_mild, label='轻度病例队列每日净增加')
-    plt.plot(range(len(daily_net_new_moderate)), daily_net_new_moderate, label='中度病例队列每日净增加')
-    plt.plot(range(len(daily_net_new_severe)), daily_net_new_severe, label='重度病例队列每日净增加')
-    plt.xlabel('天数')
-    plt.ylabel('患者净增加数量')
-    plt.title('各队列每日患者净增加数量')
+    plt.plot(range(len(daily_net_new_mild)), daily_net_new_mild, label='Daily Net Increase for Mild Cases Queue')
+    plt.plot(range(len(daily_net_new_moderate)), daily_net_new_moderate, label='Daily Net Increase for Moderate Cases Queue')
+    plt.plot(range(len(daily_net_new_severe)), daily_net_new_severe, label='Daily Net Increase for Severe Cases Queue')
+    plt.xlabel('Days')
+    plt.ylabel('Net Increase in Patients')
+    plt.title('Daily Net Increase in Patients for Each Queue')
     plt.legend()
     plt.tight_layout()
     plt.savefig('static/images/daily_net_new_cases.png')
     plt.close()
 
     plt.figure(figsize=(18, 6))
-    plt.plot(range(len(cumulative_cured_mild)), cumulative_cured_mild, label='轻度病例累计治愈人数')
-    plt.plot(range(len(cumulative_cured_moderate)), cumulative_cured_moderate, label='中度病例累计治愈人数')
-    plt.plot(range(len(cumulative_cured_severe)), cumulative_cured_severe, label='重度病例累计治愈人数')
-    plt.xlabel('天数')
-    plt.ylabel('累计治愈人数')
-    plt.title('各队列累计治愈人数')
+    plt.plot(range(len(cumulative_cured_mild)), cumulative_cured_mild, label='Cumulative Cured Mild Cases')
+    plt.plot(range(len(cumulative_cured_moderate)), cumulative_cured_moderate, label='Cumulative Cured Moderate Cases')
+    plt.plot(range(len(cumulative_cured_severe)), cumulative_cured_severe, label='Cumulative Cured Severe Cases')
+    plt.xlabel('Days')
+    plt.ylabel('Cumulative Cured Cases')
+    plt.title('Cumulative Cured Cases for Each Queue')
     plt.legend()
     plt.tight_layout()
     plt.savefig('static/images/cumulative_cured.png')
     plt.close()
 
-    # 准备输出文本
+    # Prepare output text
     outputs = {}
     outputs['mild_cases_after_one_year'] = int(mild_cases_after_one_year)
     outputs['moderate_cases_after_one_year'] = int(moderate_cases_after_one_year)
@@ -311,12 +323,12 @@ def run_simulation():
     outputs['avg_queue_length_severe'] = avg_queue_length_severe
 
     monthly_allocations = pd.DataFrame({
-        '天数': range(len(allocation_mild_list)),
-        '轻度病例': allocation_mild_list,
-        '中度病例': allocation_moderate_list,
-        '重度病例': allocation_severe_list
+        'Day': range(len(allocation_mild_list)),
+        'Mild Cases': allocation_mild_list,
+        'Moderate Cases': allocation_moderate_list,
+        'Severe Cases': allocation_severe_list
     })
-    monthly_allocations = monthly_allocations[monthly_allocations['天数'] % 30 == 0]
+    monthly_allocations = monthly_allocations[monthly_allocations['Day'] % 30 == 0]
     outputs['monthly_allocations'] = monthly_allocations.to_html(index=False)
 
     return outputs
