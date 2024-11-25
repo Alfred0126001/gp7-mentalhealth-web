@@ -43,18 +43,18 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
         ])
     elif scenario == 'crisis':
         T = np.array([
-            [0.99, 0.01, 0.00, 0.00],    # Transition probabilities for healthy individuals
-            [0.10, 0.75, 0.15, 0.0],     # Transition probabilities for mild cases
-            [0.0, 0.10, 0.85, 0.05],     # Transition probabilities for moderate cases
+            [0.993, 0.007, 0.00, 0.00],    # Transition probabilities for healthy individuals
+            [0.10, 0.5, 0.4, 0.0],     # Transition probabilities for mild cases
+            [0.0, 0.10, 0.8, 0.10],     # Transition probabilities for moderate cases
             [0.0, 0.0, 0.05, 0.95]       # Transition probabilities for severe cases
         ])
     else:
         # Default to 'peace' scenario
         T = np.array([
-            [0.995, 0.005, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.1, 0.7, 0.2, 0.00],       # Transition probabilities for mild cases
-            [0.0, 0.1, 0.7, 0.2],        # Transition probabilities for moderate cases
-            [0.00, 0.00, 0.0, 1.00]      # Transition probabilities for severe cases
+            [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.10, 0.60, 0.30, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.60, 0.30],        # Transition probabilities for moderate cases
+            [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
         ])
 
     # Initialize state vector S = [Healthy, Mild, Moderate, Severe]
@@ -212,7 +212,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
             avg_wait_severe = np.mean(queue_lengths_severe[-30:]) / mu_severe if mu_severe > 0 else 0
 
             adjust = True
-            delta = 0.05  
+            delta = 0.08  
 
             if avg_wait_severe > 7:
                 allocation_severe = min(allocation_severe + delta, 1.0)
