@@ -44,7 +44,7 @@ button:hover {
 }
 
 .plots img {
-    max-width: 100%;
+    max-width: 50%;
     height: auto;
     margin-bottom: 20px;
 }
@@ -54,7 +54,7 @@ button:hover {
 }
 
 .table table {
-    width: 100%;
+    width: 50%;
     border-collapse: collapse;
 }
 
