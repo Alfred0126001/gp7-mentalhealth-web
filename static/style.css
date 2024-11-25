@@ -1,10 +1,44 @@
+/* static/style.css */
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: "微软雅黑", Arial, sans-serif;
     margin: 20px;
+    background-color: #f4f4f4;
 }
-h1 {
+
+h1, h2 {
     color: #333;
 }
-form {
+
+.outputs p {
+    font-size: 18px;
+    color: #555;
+}
+
+.plots img {
+    max-width: 100%;
+    height: auto;
     margin-bottom: 20px;
+}
+
+.table {
+    margin-top: 20px;
+}
+
+.table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table table, .table th, .table td {
+    border: 1px solid #ddd;
+}
+
+.table th, .table td {
+    padding: 8px;
+    text-align: center;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
