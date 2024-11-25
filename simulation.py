@@ -18,9 +18,9 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     scenario = scenario  # 'peace' (stable) or 'crisis'
 
     # Initial resource allocation coefficients (ensure they sum to 1.0)
-    allocation_mild = 0.7        # Resource allocation ratio for mild cases
-    allocation_moderate = 0.2    # Resource allocation ratio for moderate cases
-    allocation_severe = 0.1      # Resource allocation ratio for severe cases
+    allocation_mild = 0.6        # Resource allocation ratio for mild cases
+    allocation_moderate = 0.1    # Resource allocation ratio for moderate cases
+    allocation_severe = 0.3      # Resource allocation ratio for severe cases
 
     # Total number of mental health professionals
     total_doctors = 1700  # Total number of doctors
@@ -78,9 +78,9 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     allocation_severe_list = []
 
     # Initialize waiting queues for each group
-    queue_mild = 10000
-    queue_moderate = 5000
-    queue_severe = 1000
+    queue_mild = 0
+    queue_moderate = 0
+    queue_severe = 0
 
     # Initialize lists to record queue lengths
     queue_lengths_mild = []
@@ -211,7 +211,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
             avg_wait_moderate = np.mean(queue_lengths_moderate[-30:]) / mu_moderate if mu_moderate > 0 else 0
             avg_wait_severe = np.mean(queue_lengths_severe[-30:]) / mu_severe if mu_severe > 0 else 0
 
-            adjust = False
+            adjust = True
             delta = 0.05  
 
             if avg_wait_severe > 7:
