@@ -103,40 +103,34 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     cumulative_cured_severe = [0]
 
     # Simulation loop
-    for day in range(SIM_TIME):
-        # ... (Simulation code remains unchanged)
+    # Simulation loop
+for day in range(SIM_TIME):
+    # Store the current state before updating
+    S_old = S.copy()
 
-        # Update mental health states (one step in Markov chain)
-        S = np.dot(S, T)
+    # Compute the transitions
+    transitions = np.zeros_like(T)
+    for i in range(4):
+        for j in range(4):
+            transitions[i, j] = S_old[i] * T[i, j]
 
-        # Ensure no negative values in S
-        S = np.maximum(S, 0)
+    # Update the state vector
+    S = np.sum(transitions, axis=0)
 
-        # Calculate total population
-        total_population = S.sum()
+    # Ensure no negative values in S
+    S = np.maximum(S, 0)
 
-        if total_population == 0:
-            new_mild = 0
-            new_moderate = 0
-            new_severe = 0
-        else:
-            # Calculate the proportion of each state
-            fraction_mild = S[1] / total_population       # Proportion of mild cases
-            fraction_moderate = S[2] / total_population   # Proportion of moderate cases
-            fraction_severe = S[3] / total_population     # Proportion of severe cases
+    # Compute net new cases for each group
+    net_new_cases = np.sum(transitions, axis=0) - np.sum(transitions, axis=1)
+    net_new_mild = net_new_cases[1]
+    net_new_moderate = net_new_cases[2]
+    net_new_severe = net_new_cases[3]
 
-            # Calculate new cases for each group
-            new_mild = S[0] * (T[0,1] + T[0,2] + T[0,3])      # Healthy to mild/moderate/severe
-            new_moderate = S[1] * (T[1,2] + T[1,3])           # Mild to moderate/severe
-            new_severe = S[2] * T[2,3]                        # Moderate to severe
-
-        # ... (Subsequent code remains unchanged)
-
-        # Ensure arrival rates are non-negative
-        lambda_mild = max(new_mild, 0)
-        lambda_moderate = max(new_moderate, 0)
-        lambda_severe = max(new_severe, 0)
-
+    # Compute arrival rates for queues
+    lambda_mild = max(net_new_mild, 0)
+    lambda_moderate = max(net_new_moderate, 0)
+    lambda_severe = max(net_new_severe, 0)
+# Generate the number of new arrivals using Poisson distribution
         try:
             num_arrivals_mild = np.random.poisson(lambda_mild)
             num_arrivals_moderate = np.random.poisson(lambda_moderate)
@@ -167,15 +161,18 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
         queue_moderate -= patients_served_moderate
         queue_severe -= patients_served_severe
 
-        # Calculate daily net new cases (arrivals - cured)
-        net_new_mild = num_arrivals_mild - patients_served_mild
-        net_new_moderate = num_arrivals_moderate - patients_served_moderate
-        net_new_severe = num_arrivals_severe - patients_served_severe
 
+        # Compute daily net new cases (arrivals - treated)
+        net_queue_mild = num_arrivals_mild - patients_served_mild
+        net_queue_moderate = num_arrivals_moderate - patients_served_moderate
+        net_queue_severe = num_arrivals_severe - patients_served_severe
+    
+    
+    
         # Record daily net new cases
-        daily_net_new_mild.append(net_new_mild)
-        daily_net_new_moderate.append(net_new_moderate)
-        daily_net_new_severe.append(net_new_severe)
+        daily_net_new_mild.append(net_queue_mild)
+        daily_net_new_moderate.append(net_queue_moderate)
+        daily_net_new_severe.append(net_queue_severe)
 
         # Update recovery counts
         recovered_mild = patients_served_mild
@@ -211,7 +208,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
             avg_wait_moderate = np.mean(queue_lengths_moderate[-30:]) / mu_moderate if mu_moderate > 0 else 0
             avg_wait_severe = np.mean(queue_lengths_severe[-30:]) / mu_severe if mu_severe > 0 else 0
 
-            adjust = True
+            adjust = False
             delta = 0.05  
 
             if avg_wait_severe > 7:
