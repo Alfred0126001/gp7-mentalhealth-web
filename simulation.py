@@ -19,14 +19,14 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
 
     # Initial resource allocation coefficients (ensure they sum to 1.0)
     allocation_mild = 0.6        # Resource allocation ratio for mild cases
-    allocation_moderate = 0.1    # Resource allocation ratio for moderate cases
-    allocation_severe = 0.3      # Resource allocation ratio for severe cases
+    allocation_moderate = 0.3    # Resource allocation ratio for moderate cases
+    allocation_severe = 0.1      # Resource allocation ratio for severe cases
 
     # Total number of mental health professionals
-    total_doctors = 1700  # Total number of doctors
+    total_doctors = 1200  # Total number of doctors
 
     # Service rate per doctor (number of patients cured per day)
-    service_rate_mild = 10       # Number of mild cases cured per doctor per day
+    service_rate_mild = 8       # Number of mild cases cured per doctor per day
     service_rate_moderate = 5    # Number of moderate cases cured per doctor per day
     service_rate_severe = 1      # Number of severe cases cured per doctor per day
 
@@ -37,23 +37,23 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     if scenario == 'peace':
         T = np.array([
             [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.10, 0.60, 0.30, 0.00],       # Transition probabilities for mild cases
-            [0.0, 0.1, 0.60, 0.30],        # Transition probabilities for moderate cases
+            [0.10, 0.80, 0.10, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.80, 0.10],        # Transition probabilities for moderate cases
             [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
         ])
     elif scenario == 'crisis':
         T = np.array([
             [0.993, 0.007, 0.00, 0.00],    # Transition probabilities for healthy individuals
-            [0.10, 0.5, 0.4, 0.0],     # Transition probabilities for mild cases
-            [0.0, 0.10, 0.8, 0.10],     # Transition probabilities for moderate cases
-            [0.0, 0.0, 0.05, 0.95]       # Transition probabilities for severe cases
+            [0.10, 0.7, 0.2, 0.0],     # Transition probabilities for mild cases
+            [0.0, 0.10, 0.7, 0.20],     # Transition probabilities for moderate cases
+            [0.0, 0.0, 0.00, 1.00]       # Transition probabilities for severe cases
         ])
     else:
         # Default to 'peace' scenario
         T = np.array([
             [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.10, 0.60, 0.30, 0.00],       # Transition probabilities for mild cases
-            [0.0, 0.1, 0.60, 0.30],        # Transition probabilities for moderate cases
+            [0.10, 0.80, 0.10, 0.00],       # Transition probabilities for mild cases
+            [0.0, 0.1, 0.80, 0.10],        # Transition probabilities for moderate cases
             [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
         ])
 
@@ -78,9 +78,9 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     allocation_severe_list = []
 
     # Initialize waiting queues for each group
-    queue_mild = 0
-    queue_moderate = 0
-    queue_severe = 0
+    queue_mild = 10000
+    queue_moderate = 5000
+    queue_severe = 3000
 
     # Initialize lists to record queue lengths
     queue_lengths_mild = []
@@ -211,19 +211,19 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
             adjust = False
             delta = 0.05  
 
-            if avg_wait_severe > 7:
+            if avg_wait_severe > 3:
                 allocation_severe = min(allocation_severe + delta, 1.0)
                 allocation_mild = max(allocation_mild - delta / 2, 0)
                 allocation_moderate = max(allocation_moderate - delta / 2, 0)
                 adjust = True
 
-            if avg_wait_moderate > 14:
+            if avg_wait_moderate > 7:
                 allocation_moderate = min(allocation_moderate + delta, 1.0)
                 allocation_mild = max(allocation_mild - delta / 2, 0)
                 allocation_severe = max(allocation_severe - delta / 2, 0)
                 adjust = True
 
-            if avg_wait_mild > 20:
+            if avg_wait_mild > 14:
                 allocation_mild = min(allocation_mild + delta, 1.0)
                 allocation_moderate = max(allocation_moderate - delta / 2, 0)
                 allocation_severe = max(allocation_severe - delta / 2, 0)
