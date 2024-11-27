@@ -102,35 +102,35 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     cumulative_cured_moderate = [0]
     cumulative_cured_severe = [0]
 
-    # Simulation loop
-    # Simulation loop
-for day in range(SIM_TIME):
-    # Store the current state before updating
-    S_old = S.copy()
-
-    # Compute the transitions
-    transitions = np.zeros_like(T)
-    for i in range(4):
-        for j in range(4):
-            transitions[i, j] = S_old[i] * T[i, j]
-
-    # Update the state vector
-    S = np.sum(transitions, axis=0)
-
-    # Ensure no negative values in S
-    S = np.maximum(S, 0)
-
-    # Compute net new cases for each group
-    net_new_cases = np.sum(transitions, axis=0) - np.sum(transitions, axis=1)
-    net_new_mild = net_new_cases[1]
-    net_new_moderate = net_new_cases[2]
-    net_new_severe = net_new_cases[3]
-
-    # Compute arrival rates for queues
-    lambda_mild = max(net_new_mild, 0)
-    lambda_moderate = max(net_new_moderate, 0)
-    lambda_severe = max(net_new_severe, 0)
-# Generate the number of new arrivals using Poisson distribution
+# Simulation loop
+    for day in range(SIM_TIME):
+        # Store the current state before updating
+        S_old = S.copy()
+    
+        # Compute the transitions
+        transitions = np.zeros_like(T)
+        for i in range(4):
+            for j in range(4):
+                transitions[i, j] = S_old[i] * T[i, j]
+    
+        # Update the state vector
+        S = np.sum(transitions, axis=0)
+    
+        # Ensure no negative values in S
+        S = np.maximum(S, 0)
+    
+        # Compute net new cases for each group
+        net_new_cases = np.sum(transitions, axis=0) - np.sum(transitions, axis=1)
+        net_new_mild = net_new_cases[1]
+        net_new_moderate = net_new_cases[2]
+        net_new_severe = net_new_cases[3]
+    
+        # Compute arrival rates for queues
+        lambda_mild = max(net_new_mild, 0)
+        lambda_moderate = max(net_new_moderate, 0)
+        lambda_severe = max(net_new_severe, 0)
+    
+        # Generate the number of new arrivals using Poisson distribution
         try:
             num_arrivals_mild = np.random.poisson(lambda_mild)
             num_arrivals_moderate = np.random.poisson(lambda_moderate)
