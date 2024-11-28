@@ -19,8 +19,8 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
 
     # Initial resource allocation coefficients (ensure they sum to 1.0)
     allocation_mild = 0.6        # Resource allocation ratio for mild cases
-    allocation_moderate = 0.3    # Resource allocation ratio for moderate cases
-    allocation_severe = 0.1      # Resource allocation ratio for severe cases
+    allocation_moderate = 0.2    # Resource allocation ratio for moderate cases
+    allocation_severe = 0.2      # Resource allocation ratio for severe cases
 
     # Total number of mental health professionals
     total_doctors = 1200  # Total number of doctors
@@ -36,25 +36,25 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     # Adjust transition matrix based on scenario
     if scenario == 'peace':
         T = np.array([
-            [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.10, 0.80, 0.10, 0.00],       # Transition probabilities for mild cases
+            [0.996, 0.004, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.10, 0.70, 0.20, 0.00],       # Transition probabilities for mild cases
             [0.0, 0.1, 0.80, 0.10],        # Transition probabilities for moderate cases
-            [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
+            [0.00, 0.00, 0.20, 0.80]      # Transition probabilities for severe cases
         ])
     elif scenario == 'crisis':
         T = np.array([
-            [0.993, 0.007, 0.00, 0.00],    # Transition probabilities for healthy individuals
+            [0.995, 0.005, 0.00, 0.00],    # Transition probabilities for healthy individuals
             [0.10, 0.7, 0.2, 0.0],     # Transition probabilities for mild cases
             [0.0, 0.10, 0.7, 0.20],     # Transition probabilities for moderate cases
-            [0.0, 0.0, 0.00, 1.00]       # Transition probabilities for severe cases
+            [0.0, 0.0, 0.10, 0.90]       # Transition probabilities for severe cases
         ])
     else:
         # Default to 'peace' scenario
         T = np.array([
-            [0.994, 0.006, 0.00, 0.00],  # Transition probabilities for healthy individuals
-            [0.10, 0.80, 0.10, 0.00],       # Transition probabilities for mild cases
+            [0.996, 0.004, 0.00, 0.00],  # Transition probabilities for healthy individuals
+            [0.10, 0.70, 0.20, 0.00],       # Transition probabilities for mild cases
             [0.0, 0.1, 0.80, 0.10],        # Transition probabilities for moderate cases
-            [0.00, 0.00, 0.10, 0.90]      # Transition probabilities for severe cases
+            [0.00, 0.00, 0.20, 0.80]      # Transition probabilities for severe cases
         ])
 
     # Initialize state vector S = [Healthy, Mild, Moderate, Severe]
