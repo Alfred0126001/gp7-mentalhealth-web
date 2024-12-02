@@ -23,7 +23,7 @@ def run_simulation(healthy_population, mild_cases, moderate_cases, severe_cases,
     allocation_severe = 0.2      # Resource allocation ratio for severe cases
 
     # Total number of mental health professionals
-    total_doctors = 1200  # Total number of doctors
+    total_doctors = 1500  # Total number of doctors
 
     # Service rate per doctor (number of patients cured per day)
     service_rate_mild = 8       # Number of mild cases cured per doctor per day
